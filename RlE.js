@@ -10,7 +10,6 @@ if (arg[2]=="decode")
 {
     decode(inf,outf);
 }
-
 function code(infile,outfile)
 {
     let inText;
@@ -50,11 +49,7 @@ function decode(infile,outfile)
         let symb = outText.charAt(i);
         if(symb=='#')
         {
-
-
             decodedStr+=outText.charAt(i+2).repeat(outText.charCodeAt(i+1));
-
-
         }
         else
         {
@@ -69,4 +64,3 @@ function decode(infile,outfile)
     }
     fs.writeFileSync(outfile, decodedStr);
 }
-

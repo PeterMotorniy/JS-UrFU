@@ -22,23 +22,23 @@ let code = "";
 for (let i = 0; i < Object.keys(alphabet).length; i++)
 {
     let max = -1;
-    let maxlet = "";
+    let maxLet = "";
     for (let i of Object.keys(alphabet))
     {
         if (alphabet[i] > max)
         {
             max = alphabet[i];
-            maxlet = i;
+            maxLet = i;
         }
     }
-    alphabet[maxlet] = -1;
+    alphabet[maxLet] = -1;
     if (i != Object.keys(alphabet).length - 1)
     {
-        codes[maxlet] = (code+"0");
+        codes[maxLet] = (code+"0");
     }
     else
     {
-        codes[maxlet] = (code);
+        codes[maxLet] = (code);
     }
     code = code + "1";
 }

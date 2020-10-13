@@ -34,11 +34,11 @@ for (let i = 0; i < Object.keys(alphabet).length; i++)
     alphabet[maxLet] = -1;
     if (i != Object.keys(alphabet).length - 1)
     {
-        codes[maxLet] = (code+"0");
+        codes[maxLet] = code + "0";
     }
     else
     {
-        codes[maxLet] = (code);
+        codes[maxLet] = code;
     }
     code = code + "1";
 }

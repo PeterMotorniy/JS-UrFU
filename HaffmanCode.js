@@ -32,9 +32,15 @@ for (let i = 0; i < Object.keys(alphabet).length; i++)
         }
     }
     alphabet[maxlet] = -1;
-    codes[maxlet] = (code+"0");
+    if (i != Object.keys(alphabet).length - 1)
+    {
+        codes[maxlet] = (code+"0");
+    }
+    else
+    {
+        codes[maxlet] = (code);
+    }
     code = code + "1";
-
 }
 console.log(codes)
 let codedStr=""

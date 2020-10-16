@@ -22,24 +22,10 @@ fs.readFile(arg[2], (err, data) => {
             alphabet[elem]=1;
         }
     }
-    for(let i = 0;i<Object.values(alphabet).length;i++)
+    for(let i = 0; i<Object.values(alphabet).length; i++)
     {
-        if (str.length!=0)
-        {
-            let p =(Object.values(alphabet)[i])/str.length;
-            H+=p*Math.log2(p);
-        }
-        else
-        {
-            H=0;
-        }
+        let p =(Object.values(alphabet)[i])/str.length;
+        H+=p*Math.log2(p);
     }
-    if(H==0)
-    {
-        console.log(H);
-    }
-    else
-    {
-        console.log(-1*H);
-    }
+console.log(H);
 });

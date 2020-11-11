@@ -1,75 +1,113 @@
-let fs = require('fs');
-let arg = process.argv;
-let inputStr = arg[2];
-inputStr=inputStr.toString();
-let alphabet = new Map();
-let count = 0;
-for(let i = 0;i<inputStr.length;i++)
-{
-    let elem=inputStr[i];
-    if (elem in alphabet)
-    {
-        alphabet[elem]++;
-    }
-    else
-    {
-        count++;
-        alphabet[elem] = 1;
-    }
+let fs = require ('fs');
+let inputStr = fs.readFileSync('input.txt').toString();
+let alphabet = new Array();
+let huffmanTree = new Array();
+
+function Node(symbol, freq, used, parent, code){
+    this.parent = parent;
+    this.letter = symbol;
+    this.used = used;
+    this.freq = freq;
+    this.code = code;
 }
-let codes = new Map();
-let code = "";
-for (let i = 0; i < Object.keys(alphabet).length; i++)
+
+for(let i = 0; i < inputStr.length; i++)
 {
-    let max = -1;
-    let maxLet = "";
-    for (let i of Object.keys(alphabet))
-    {
-        if (alphabet[i] > max)
+    alphabet [inputStr.charAt(i)] = 0;
+}
+
+for(let i = 0; i < inputStr.length; i++)
+{
+    alphabet [inputStr.charAt(i)]++;
+}
+
+for(i in alphabet){
+    let newNode = new Node(i, alphabet[i], false, null, '');
+    huffmanTree.push(newNode);
+}
+
+let treeLength = huffmanTree.length;
+for (let i = 0; i < treeLength - 1; i++){
+    let firstMinInd = -1;
+    let firstMinFrequency = inputStr.length;
+    let secondMinInd = -1;
+    let secondMinFrequency = inputStr.length;
+    for(let j = 0; j < huffmanTree.length; j++){
+        if((huffmanTree[j].used == 0) && (huffmanTree[j].freq <= firstMinFrequency))
         {
-            max = alphabet[i];
-            maxLet = i;
+            secondMinInd = firstMinInd;
+            firstMinInd = j;
+            secondMinFrequency = firstMinFrequency;
+            firstMinFrequency = huffmanTree[j].freq;
+        }
+        else if ((huffmanTree[j].used == 0) && (huffmanTree[j].freq <= secondMinFrequency))
+        {
+            secondMinInd = j;
+            secondMinFrequency = huffmanTree[j].freq;
+        }
+
+    }
+    huffmanTree.push(new Node(huffmanTree[secondMinInd].letter + huffmanTree[firstMinInd].letter, firstMinFrequency + secondMinFrequency, false, null, ''));
+    huffmanTree[firstMinInd].used = true;
+    huffmanTree[secondMinInd].used = true;
+    huffmanTree[firstMinInd].parent = huffmanTree.length - 1;
+    huffmanTree[secondMinInd].parent = huffmanTree.length - 1;
+    huffmanTree[firstMinInd].code = '0';
+    huffmanTree[secondMinInd].code = '1';
+}
+
+if (treeLength > 1)
+{
+    for (let i = 0; i < treeLength; i++)
+    {
+        let par = huffmanTree[huffmanTree[i].parent];
+        while (par.parent != null)
+        {
+            huffmanTree[i].code = par.code + huffmanTree[i].code;
+            par = huffmanTree[par.parent];
         }
     }
-    alphabet[maxLet] = -1;
-    if (i != Object.keys(alphabet).length - 1)
-    {
-        codes[maxLet] = code + "0";
-    }
-    else
-    {
-        codes[maxLet] = code;
-    }
-    code = code + "1";
 }
-console.log(codes)
-let codedStr=""
+else
+{
+    huffmanTree[0].code = '0';
+}
+
+for (let i = 0; i < treeLength; i++)
+{
+    console.log(`${huffmanTree[i].letter}: ${huffmanTree[i].code}`);
+}
+
+
+let codeString = "";
 for (let i = 0; i < inputStr.length; i++)
 {
-    codedStr += codes[inputStr[i]];
-}
-console.log(codedStr);
-let currentCode = "";
-let decodedStr = "";
-let e = 0;
-for (let i = 0; i<codedStr.length; i++)
-{
-    for (let j = 0; j<Object.values(codes).length; j++)
+    for (let j = 0; j < treeLength; j++)
     {
-        if (Object.values(codes)[j]==currentCode)
+        if (inputStr[i] == huffmanTree[j].letter)
         {
-            decodedStr += Object.keys(codes)[j]
-            currentCode = "";
-            continue;
+            codeString += huffmanTree[j].code;
+            break;
         }
     }
-    currentCode+=codedStr[i];
 }
-for (let j = 0;j<Object.values(codes).length;j++)
+console.log("Encoded string:")
+console.log(codeString);
+
+let decodeString = "";
+let codes = "";
+for (let i = 0; i < codeString.length; i++)
 {
-    if (Object.values(codes)[j] == currentCode)
+    codes += codeString[i];
+    for (let j = 0; j < treeLength; j++)
     {
-        decodedStr += Object.keys(codes)[j];
+        if (codes == huffmanTree[j].code)
+        {
+            decodeString += huffmanTree[j].letter;
+            codes = "";
+            break;
+        }
     }
 }
-console.log(decodedStr);
+console.log("Decoded string:")
+console.log(decodeString);

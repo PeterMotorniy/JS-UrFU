@@ -75,7 +75,7 @@ else
 
 for (let i = 0; i < treeLength; i++)
 {
-    console.log(`${huffmanTree[i].letter}: ${huffmanTree[i].code}`);
+    console.log(huffmanTree[i].letter + " : " + huffmanTree[i].code);
 }
 
 

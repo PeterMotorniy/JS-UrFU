@@ -27,5 +27,5 @@ fs.readFile(arg[2], (err, data) => {
         let p =(Object.values(alphabet)[i])/str.length;
         H+=p*Math.log2(p);
     }
-console.log(H);
+    console.log(-1 * H);
 });

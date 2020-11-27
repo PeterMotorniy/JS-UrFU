@@ -1,15 +1,15 @@
-let string = "Anyone who reads Old and Middle English literary texts will be familiar with the mid-brown volumes of the EETS, with the symbol of Alfred's jewel embossed on the front cover. Most of the works attributed to King Alfred or to Aelfric, along with some of those by bishop Wulfstan and much anonymous prose and verse from the pre-Conquest period, are to be found within the Society's three series; all of the surviving medieval drama, most of the Middle English romances, much religious and secular prose and verse including the English works of John Gower, Thomas Hoccleve and most of Caxton's prints all find their place in the publications. Without EETS editions, study of medieval English texts would hardly be possible."
-let temp = "the"
-console.log(PrefixAlgorithm(temp,string))
-console.log(string.indexOf(temp))
-console.log(AutomatSearch(temp, string))
+let string = "Anyone who reads Old and Middle English literary texts will be familiar with the mid-brown volumes of the EETS, with the symbol of Alfred's jewel embossed on the front cover. Most of the works attributed to King Alfred or to Aelfric, along with some of those by bishop Wulfstan and much anonymous prose and verse from the pre-Conquest period, are to be found within the Society's three series; all of the surviving medieval drama, most of the Middle English romances, much religious and secular prose and verse including the English works of John Gower, Thomas Hoccleve and most of Caxton's prints all find their place in the publications. Without EETS editions, study of medieval English texts would hardly be possible.";
+let temp = "the";
+console.log(PrefixAlgorithm(temp,string));
+console.log(string.indexOf(temp));
+console.log(AutomatSearch(temp, string));
 
 function PrefixAlgorithm(template, string)
 {
-    var result = new Array()
-    var pi = [];
-    var templatePosition = 2;
-    var k = 0;
+    let result = new Array()
+    let pi = [];
+    let templatePosition = 2;
+    let k = 0;
 
     pi[0] = -1;
     pi[1] = 0;
@@ -29,8 +29,8 @@ function PrefixAlgorithm(template, string)
         }
     }
 
-    var foundIndex = 0;
-    var i = 0;
+    let foundIndex = 0;
+    let i = 0;
     while (foundIndex + i < string.length)
     {
         if (template[i] == string[foundIndex + i])
@@ -54,46 +54,46 @@ function PrefixAlgorithm(template, string)
         }
     }
     if (result.length == 0)
-        return -1
+        return -1;
     return result;
 }
 
 function AutomatSearch(t, string)
 {
 
-    var result = new Array();
+    let result = new Array();
     m = t.length;
-    alph = new Array()
+    alph = new Array();
     let indexes = new Array();
     for(i = 0; i < m; i++)
     {
-        alph[t.charAt(i)] = 0
+        alph[t.charAt(i)] = 0;
     }
-    del=new Array(m + 1)
+    del=new Array(m + 1);
     for(j = 0; j <= m; j++)
-        del[j] = new Array()
+        del[j] = new Array();
 
     for(i in alph)
-        del[0][i] = 0
+        del[0][i] = 0;
     for(j = 0; j < m; j++){
-        prev = del[j][t.charAt(j)]
-        del[j][t.charAt(j)] = j + 1
+        prev = del[j][t.charAt(j)];
+        del[j][t.charAt(j)] = j + 1;
         for(i in alph)
-            del[j + 1][i] = del[prev][i]
+            del[j + 1][i] = del[prev][i];
     }
     let numb = 0;
     for(i in alph)
     {
-        indexes[i] = numb
+        indexes[i] = numb;
         numb++;
     }
-    s = new Array()
+    s = new Array();
     for(j = 0; j <= m; j++)
     {
-        s[j] = new Array()
+        s[j] = new Array();
         for(i in alph)
         {
-            s[j].push(del[j][i])
+            s[j].push(del[j][i]);
 
         }
 
@@ -103,16 +103,16 @@ function AutomatSearch(t, string)
     {
         let readLetter = string[i];
         if (indexes[readLetter] != undefined)
-            status = (s[status][indexes[readLetter]])
+            status = (s[status][indexes[readLetter]]);
         else
-            status = 0
+            status = 0;
         if (status == t.length)
         {
             found = true;
-            result.push(i - m + 1)
+            result.push(i - m + 1);
         }
     }
     if (result.length == 0)
-        return -1
+        return -1;
     return result;
 }

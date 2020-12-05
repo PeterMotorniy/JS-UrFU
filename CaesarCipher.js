@@ -1,48 +1,38 @@
-let str = "Yeah man can you hear me";
-let alphabetUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-let alphabetLower = alphabetUpper.toLowerCase();
-
-let alphabetUpperFreq = new Map();
-let alphabetLowerFreq = new Map();
-for(let char of alphabetUpper)
-{
-    alphabetUpperFreq[char] = 0;
-}
+let str = "Aaa";
+let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 let frequenciesInPercents = [8.2, 1.5, 2.8, 4.3, 13.0, 2.2, 2.0, 6.1, 7.0, 0.15, 0.77, 4.0, 2.4, 6.7, 7.5, 1.9, 0.095, 6.0, 6.3, 9.1, 2.8, 0.98, 2.4, 0.15, 2.0, 0.074];
+let alphabetFreq = new Map();
 let frequencies = new Array();
 for(let freq of frequenciesInPercents)
 {
     frequencies.push(freq / 100);
 }
-for (let i = 0; i < alphabetUpper.length; i++)
+for (let i = 0; i < alphabet.length; i++)
 {
-    alphabetUpperFreq[alphabetUpper[i]] = frequencies[i];
-    alphabetLowerFreq[alphabetUpper[i].toLowerCase()] = frequencies[i];
+    alphabetFreq[alphabet[i]] = frequencies[i];
 }
-console.log(alphabetLowerFreq);
 
-function Encode(str, alphabetLower, shift)
+function Encode(str, alphabetUpper, shift)
 {
-    let alphabetUpper = alphabetLower.toUpperCase();
+    alphabetUpper = alphabetUpper.toUpperCase();
     let result = "";
     for(let char of str)
     {
-        if (alphabetLower.indexOf(char) == -1 && alphabetUpper.indexOf(char) == -1)
+        if (alphabetUpper.indexOf(char.toUpperCase()) == -1)
             result+=char;
-        else if (alphabetUpper.indexOf(char) != -1)
-        {
-            index = alphabetUpper.indexOf(char);
-            index = (index + shift) % alphabetUpper.length;
-            result+=alphabetUpper[index];
-        }
         else
         {
-            index = alphabetLower.indexOf(char);
-            index = (index + shift) % alphabetLower.length;
-            result+=alphabetLower[index];
+            let index = alphabetUpper.indexOf(char.toUpperCase());
+            index = (index + shift) % alphabetUpper.length;
+            if (alphabetUpper.indexOf(char) != -1)
+                result+=alphabetUpper[index];
+            else
+                result+=alphabetUpper[index].toLowerCase();
+
         }
     }
     return result;
 }
-let a = Encode(str, alphabetLower, 24);
-console.log(a == "Wcyf kyl ayl wms fcyp kc");
+
+
+console.log(Encode(str, alphabet, 27));

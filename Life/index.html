@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game "Life"</title>
+</head>
+<body>
+    <h1>
+        Life
+    </h1>
+    <form>
+        <label for="size"></label><input id = "size" type="text" placeholder="Enter game size" onkeyup="this.value = this.value.replace (/\D/gi, '').replace (/^0+/, '')">
+        <br>
+        <input type="button" value="Draw" onclick="InitializeCanvas()">
+    </form>
+    <script src="program.js"></script>
+    <br>
+    <canvas id="myCanvas" ></canvas>
+    <input type="button" onclick="MakeNextGeneration()">
+</body>
+</html>

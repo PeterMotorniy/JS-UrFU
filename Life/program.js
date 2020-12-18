@@ -4,9 +4,32 @@ let cellSize = 50;
 let aliveColor = "#37d792";
 let deadColor = "#737773";
 let aliveCells = new Array();
+let needToStop = false;
+let wasStopped = false;
+let timer;
+let timerInterval = 500;
+
+function StartGame()
+{
+    StopGame();
+    timer = setInterval(MakeNextGeneration, timerInterval);
+}
+
+function StopGame()
+{
+    needToStop = false;
+    clearInterval(timer);
+    while(!wasStopped)
+    {
+        continue;
+    }
+}
+
+
 
 function InitializeCanvas()
 {
+    needToStop = true;
     sizeInCellsNumber = document.getElementById("size").value;
     let canvasSize = sizeInCellsNumber * cellSize + (sizeInCellsNumber - 1) * spaceBetweenCells;
     let canvas = document.createElement("canvas");
@@ -19,12 +42,17 @@ function InitializeCanvas()
         let rect = canvas.getBoundingClientRect();
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
+        needToStop = true;
         ChangeColor(x, y);
+        clearInterval(timer);
+        wasStopped = true;
     });
     let oldCanvas = document.getElementById("myCanvas");
     oldCanvas.remove();
     document.body.append(canvas);
     InitizlizeCells(canvasSize);
+    clearInterval(timer);
+    wasStopped = true;
 }
 
 function InitizlizeCells(sizeInPixels)
@@ -58,8 +86,29 @@ function ChangeColor(xCoordinate, yCoordinate)
     Redraw();
 }
 
+function CountNeighbours(x, y)
+{
+    let counter = 0;
+    for(let deltaX = -1; deltaX <= 1; deltaX++)
+    {
+        let newX = (x + deltaX + 1 * sizeInCellsNumber) % sizeInCellsNumber;
+        for(let deltaY = -1; deltaY <= 1; deltaY++)
+        {
+            let newY = (y + deltaY + 1 * sizeInCellsNumber) % sizeInCellsNumber;
+            if(aliveCells[newX][newY] && !(deltaY == 0 && deltaX == 0))
+                counter++;
+        }
+    }
+    return counter;
+}
+
 function MakeNextGeneration()
 {
+    if(needToStop)
+    {
+        clearInterval(timer);
+        wasStopped = true;
+    }
     let neighboursNumber = new Array();
     let newAliveCells = new Array();
     for(let x = 0; x < sizeInCellsNumber; x++)
@@ -75,20 +124,7 @@ function MakeNextGeneration()
     for(let x = 0; x < sizeInCellsNumber; x++)
     {
         for(let y = 0; y < sizeInCellsNumber; y++)
-        {
-            let counter = 0;
-            for(let deltaX = -1; deltaX <= 1; deltaX++)
-            {
-                let newX = (x + deltaX + 1 * sizeInCellsNumber) % sizeInCellsNumber;
-                for(let deltaY = -1; deltaY <= 1; deltaY++)
-                {
-                    let newY = (y + deltaY + 1 * sizeInCellsNumber) % sizeInCellsNumber;
-                    if(aliveCells[newX][newY] && !(deltaY == 0 && deltaX == 0))
-                        counter++;
-                }
-            }
-            neighboursNumber[x][y] = counter;
-        }
+            neighboursNumber[x][y] = CountNeighbours(x, y);
     }
     for(let x = 0; x < sizeInCellsNumber; x++)
     {

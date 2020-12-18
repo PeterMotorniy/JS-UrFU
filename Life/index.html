@@ -11,11 +11,16 @@
     <form>
         <label for="size"></label><input id = "size" type="text" placeholder="Enter game size" onkeyup="this.value = this.value.replace (/\D/gi, '').replace (/^0+/, '')">
         <br>
+        <br>
         <input type="button" value="Draw" onclick="InitializeCanvas()">
+        <br>
+        <br>
+        <input type="button" onclick="StartGame()" value="Start Game">
+        <input type="button" onclick="StopGame()" value="Stop Game">
     </form>
     <script src="program.js"></script>
     <br>
-    <canvas id="myCanvas" ></canvas>
-    <input type="button" onclick="MakeNextGeneration()">
+    <canvas id="myCanvas"></canvas>
+
 </body>
 </html>

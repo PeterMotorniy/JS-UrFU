@@ -2,7 +2,6 @@ let fs = require('fs');
 let arg = process.argv;
 let string = fs.readFileSync("input.txt").toString();
 let template = arg[2];
-
 console.log("Boyer-Moore Search result:" +  " " + BoyerMooreSearch(string, template));
 function BoyerMooreSearch(string,template)
 {
@@ -45,17 +44,10 @@ function GetShift2(T)
 
     newT += T;
     let badSymbol = T[T.length - 1];
-    for(let j = newT.length - 2; j >= 0; j--)
+    for(let i = 0; i <= T.length; i++)
     {
-        if(newT[j - suffix.length] != badSymbol)
-        {
-            shift2.push(newT.length  - j - 1);
-            break;
-        }
-    }
-    for(let i = 1; i <= T.length; i++)
-    {
-        suffix = T[T.length - i] + suffix;
+        if(i != 0)
+            suffix = T[T.length - i] + suffix;
         badSymbol = T[T.length - i - 1];
         for(let j = newT.length - 2; j >= 0; j--)
         {
@@ -69,11 +61,11 @@ function GetShift2(T)
     return shift2;
 }
 
-function Check(string, T, index)
+function Check(string, template, index)
 {
     let l = 0;
-    let tIndex = T.length - 1;
-    while((string[index] == T[tIndex] || string[index] == '*') && l < T.length)
+    let tIndex = template.length - 1;
+    while((string[index] == template[tIndex] || string[index] == '*') && l < template.length)
     {
         l++
         tIndex--;

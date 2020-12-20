@@ -34,21 +34,21 @@ function BoyerMooreSearch(string,template)
         return res;
 }
 
-function GetShift2(T)
+function GetShift2(template)
 {
     let shift2 = new Array();
     let newT = "";
     let suffix = "";
-    for(let i = 0; i <= T.length; i++)
+    for(let i = 0; i <= template.length; i++)
         newT += '*'
 
-    newT += T;
-    let badSymbol = T[T.length - 1];
-    for(let i = 0; i <= T.length; i++)
+    newT += template;
+    let badSymbol = template[template.length - 1];
+    for(let i = 0; i <= template.length; i++)
     {
         if(i != 0)
-            suffix = T[T.length - i] + suffix;
-        badSymbol = T[T.length - i - 1];
+            suffix = template[template.length - i] + suffix;
+        badSymbol = template[template.length - i - 1];
         for(let j = newT.length - 2; j >= 0; j--)
         {
             if(Check(newT, suffix, j) == suffix.length && newT[j - suffix.length] != badSymbol)

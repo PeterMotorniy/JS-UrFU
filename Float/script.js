@@ -1,5 +1,13 @@
 let fs = require('fs');
 let arg = process.argv;
+
+
+let positiveInfinity = "0 11111111 000000000000000000000000";
+let negativeInfinity = "1 11111111 000000000000000000000000";
+let NaN = "0 11111111 10000000000000000000000";
+let positiveZero = "0 00000000 000000000000000000000000";
+let negativeZero = "1 00000000 000000000000000000000000";
+
 if (arg[2] == "conv")
     fs.writeFileSync("out.txt", GetBinaryNumber(fs.readFileSync("in.txt").toString()));
 if (arg[2] == "calc")
@@ -12,10 +20,27 @@ if (arg[2] == "calc")
     if(arr[1] == '-')
         res = Subtract(arr[0], arr[2]);
     fs.writeFileSync("out.txt", res + " ~" + ToInt(res));
-
-
 }
-console.log(fs.readFileSync("in.txt").toString());
+
+function GetBinaryNumber(number) // Input number as string
+{
+    if(number * 1 > ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
+        return positiveInfinity;
+    else if (number * 1 < -1 * ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
+        return negativeInfinity;
+    else if(!Check(number))
+        return NaN;
+    else if(Math.abs(number) < 2e-126 && Math.abs(number) >= 2e-149)
+        return Denormalized(number * 1);
+    else if(number < 2e-149 && number > 0)
+        return  positiveZero;
+    else if (number * 1 > -2e-149 && number < 0)
+        return negativeZero;
+    else
+        return Normalized(number * 1);
+}
+
+
 function Normalized(number)
 {
     let binaryNumber = number.toString(2);
@@ -81,7 +106,6 @@ function Normalized(number)
 function Check(number)
 {
     let digits = "0123456789";
-    number = number.toString()
     if(number[0] != '-' && digits.indexOf(number[0]) == -1)
         return false;
     else
@@ -104,24 +128,7 @@ function Check(number)
     }
     return true;
 }
-function GetBinaryNumber(number)
-{
-    number = number * 1;
-    if(number > ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
-        return "0 11111111 000000000000000000000000";
-    else if (number < -1 * ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
-        return "1 11111111 000000000000000000000000";
-    else if(!Check(number))
-        return "0 11111111 10000000000000000000000";
-    else if(Math.abs(number) < 2e-126 && Math.abs(number) >= 2e-149)
-        return Denormalized(number);
-    else if(number < 2e-149 && number > 0)
-        return  "0 00000000 000000000000000000000000";
-    else if (number > -2e-149 && number < 0)
-        return "1 00000000 000000000000000000000000";
-    else
-        return Normalized(number);
-}
+
 
 function Denormalized(number)
 {
@@ -151,14 +158,27 @@ function Denormalized(number)
 
 function Sum(a, b)
 {
-    arrA = GetBinaryNumber(a).split(" ");
-    arrB = GetBinaryNumber(b).split(" ");
+    let numbA = GetBinaryNumber(a);
+    let numbB = GetBinaryNumber(b);
+    if(numbA == NaN || numbB == NaN || numbA == positiveInfinity || numbA == negativeInfinity || numbB == positiveInfinity || numbB == negativeInfinity)
+        return NaN;
+    else if(numbA == positiveZero || numbA == negativeZero)
+        return numbB;
+    else if(numbB == positiveZero || numbB == negativeZero)
+        return numbA
+    arrA = numbA.split(" ");
+    arrB = numbB.split(" ");
     let lengthA = arrA[1];
     let lengthB = arrB[1];
     let mantissaA = "1" + arrA[2];
     let mantissaB = "1" + arrB[2];
     if(arrA[0] != arrB[0] && lengthA == lengthB && mantissaA == mantissaB)
         return  "0 00000000 000000000000000000000000";
+    else if(arrA[1] == "11111110" && arrB[1] == "11111110" && arrA[0] == '0' && arrB[0] == '0')
+        return positiveInfinity;
+    else if(arrA[1] == "11111110" && arrB[1] == "11111110" && arrA[0] == '1' && arrB[0] == '1')
+        return negativeInfinity;
+
     let delta = Math.abs(parseInt(lengthA, 2) - parseInt(lengthB, 2));
     let resLength = 0;
     let resMantissa = "";
@@ -180,6 +200,8 @@ function Sum(a, b)
     {
         resLength = lengthA;
     }
+
+
     if(arrA[0] == arrB[0])
     {
         resMantissa = SumBinaryies(mantissaA, mantissaB);
@@ -188,8 +210,8 @@ function Sum(a, b)
             resLength = SumBinaryies(resLength, "00000001");
             resMantissa = resMantissa.substr(0, 24);
         }
-        return arrA[0] + " " + resLength + " " + resMantissa.substr(1);
-
+        resSign = arrA[0];
+        resMantissa = resMantissa.substr(1);
     }
     else
     {
@@ -220,8 +242,9 @@ function Sum(a, b)
         while (str.length < 8)
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
-        return resSign + " " + resLength + " " + resMantissa;
     }
+
+    return resSign + " " + resLength + " " + resMantissa;
 }
 
 function SumBinaryies(a, b)
@@ -284,12 +307,30 @@ function SubtractBinaries(a, b)
 
 function Subtract(a, b)
 {
-    arrA = GetBinaryNumber(a).split(" ");
-    arrB = GetBinaryNumber(b).split(" ");
+    let numbA = GetBinaryNumber(a);
+    let numbB = GetBinaryNumber(b);
+    if(numbA == NaN || numbB == NaN || numbA == positiveInfinity || numbA == negativeInfinity || numbB == positiveInfinity || numbB == negativeInfinity)
+        return NaN;
+    else if(numbA == positiveZero || numbA == negativeZero)
+    {
+        if(numbB[0] == '0')
+            numbB[0] = '1';
+        else
+            numbB[0] = '0';
+        return numbB;
+    }
+    else if(numbB == positiveZero || numbB == negativeZero)
+        return numbA;
+    arrA = numbA.split(" ");
+    arrB = numbB.split(" ");
     let lengthA = arrA[1];
     let lengthB = arrB[1];
     let mantissaA = "1" + arrA[2];
     let mantissaB = "1" + arrB[2];
+    if(arrA[0] != arrB[0] && arrA[0] == '0' && lengthA == "11111110" && lengthB == "11111110")
+        return positiveInfinity;
+    else if(arrA[0] != arrB[0] && arrA[0] == '1' && lengthA == "11111110" && lengthB == "11111110")
+        return negativeInfinity;
     if(arrA[0] == arrB[0] && lengthA == lengthB && mantissaA == mantissaB)
         return  "0 00000000 000000000000000000000000";
     let delta = Math.abs(parseInt(lengthA, 2) - parseInt(lengthB, 2));
@@ -361,12 +402,17 @@ function Subtract(a, b)
 
 function ToInt(number)
 {
+    if(number == NaN)
+        return "NaN";
+    else if(number == positiveZero || number == negativeZero)
+        return 0;
+    else if(number == negativeInfinity)
+        return "-Infinity";
+    else if(number == positiveInfinity)
+        return "+Infinity";
     let arr = number.split(" ");
     let res = parseInt("1" + arr[2], 2) * Math.pow(2, parseInt(arr[1], 2) - 127 - 23);
     if(arr[0] == '1')
         res *= -1;
     return res
 }
-let a = Subtract(-7, -5.1);
-console.log(a);
-console.log(ToInt(a));

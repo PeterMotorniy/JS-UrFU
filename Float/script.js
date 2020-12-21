@@ -1,20 +1,17 @@
 let fs = require('fs');
 let arg = process.argv;
 
-
 let positiveInfinity = "0 11111111 000000000000000000000000";
 let negativeInfinity = "1 11111111 000000000000000000000000";
 let NaN = "0 11111111 10000000000000000000000";
 let positiveZero = "0 00000000 000000000000000000000000";
 let negativeZero = "1 00000000 000000000000000000000000";
-
 if (arg[2] == "conv")
     fs.writeFileSync("out.txt", GetBinaryNumber(fs.readFileSync("in.txt").toString()));
 if (arg[2] == "calc")
 {
     let res = "";
     let arr = fs.readFileSync("in.txt").toString().split(" ");
-    console.log(arr);
     if(arr[1] == '+')
         res = Sum(arr[0], arr[2]);
     if(arr[1] == '-')
@@ -22,48 +19,76 @@ if (arg[2] == "calc")
     fs.writeFileSync("out.txt", res + " ~" + ToInt(res));
 }
 
-function GetBinaryNumber(number) // Input number as string
+
+function Denormalized(number) // Number as bnary string
 {
-    if(number * 1 > ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
+    let sign = '0';
+    let length = "00000000";
+    if(number[0] == '-')
+    {
+        sign = '1';
+        number = number.substr(1);
+    }
+    let nullsCount = number.indexOf('1');
+    nullsCount -= 2;
+
+    let delta = nullsCount - 126;
+    let mantissa = "";
+    for(let i = 0; i < delta; i++)
+    {
+        mantissa = "0" + mantissa;
+    }
+    console.log(delta)
+    mantissa += (number.substr(number.indexOf('1')));
+    mantissa = mantissa.substr(0, 23);
+    while (mantissa.length < 23)
+    {
+        mantissa += "0";
+    }
+    return sign + " " + length + " " + mantissa;
+}
+function GetBinaryNumber(number) // Number as string
+{
+    number = number * 1;
+    if(number > ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
         return positiveInfinity;
-    else if (number * 1 < -1 * ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
+    else if (number < -1 * ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
         return negativeInfinity;
-    else if(!Check(number))
+    else if(Math.abs(number) < Math.pow(2, -126) && Math.abs(number) >= Math.pow(2, -149))
+        return Denormalized(number.toString(2));
+    else if(!Check(number.toString()))
         return NaN;
-    else if(Math.abs(number) < 2e-126 && Math.abs(number) >= 2e-149)
-        return Denormalized(number * 1);
     else if(number < 2e-149 && number > 0)
         return  positiveZero;
-    else if (number * 1 > -2e-149 && number < 0)
+    else if (number > -2e-149 && number < 0)
         return negativeZero;
     else
-        return Normalized(number * 1);
+        return Normalized(number.toString(2));
 }
 
 
-function Normalized(number)
+function Normalized(number) // Number as binary string
 {
-    let binaryNumber = number.toString(2);
     let lengthOfNumber = 0;
     let before = new Array();
     let after = new Array();
     let sign = '0';
-    if(binaryNumber[0] == '-')
+    if(number[0] == '-')
     {
         sign = '1';
-        binaryNumber = binaryNumber.substr(1);
+        number = number.substr(1);
     }
 
     let index = 0;
-    while(binaryNumber[index] != '.' && index < binaryNumber.length)
+    while(number[index] != '.' && index < number.length)
     {
-        before.push(binaryNumber[index]);
+        before.push(number[index]);
         index++;
     }
     index++
-    while(index < binaryNumber.length)
+    while(index < number.length)
     {
-        after.push(binaryNumber[index]);
+        after.push(number[index]);
         index++;
     }
     if(before[0] == '0')
@@ -103,7 +128,7 @@ function Normalized(number)
     return sign + " " + lengthOfNumber + " " + mantissa;
 }
 
-function Check(number)
+function Check(number) // Number as string
 {
     let digits = "0123456789";
     if(number[0] != '-' && digits.indexOf(number[0]) == -1)
@@ -130,33 +155,9 @@ function Check(number)
 }
 
 
-function Denormalized(number)
-{
-    let binaryNumber = number.toString(2);
-    let sign = '0';
-    let length = "00000000";
-    if(binaryNumber[0] == '-')
-    {
-        sign = '1';
-        binaryNumber = binaryNumber.substr(1);
-    }
-    let nullsCount = binaryNumber.indexOf('1');
-    nullsCount -= 2;
-    let delta = nullsCount - 126;
-    let mantissa = "";
-    for(let i = 0; i < delta; i++)
-    {
-        mantissa = "0" + mantissa;
-    }
-    mantissa += (binaryNumber.substr(binaryNumber.indexOf('1'), 23));
-    while (mantissa.length < 23)
-    {
-        mantissa += "0";
-    }
-    return sign + " " + length + " " + mantissa;
-}
 
-function Sum(a, b)
+
+function Sum(a, b) // Numbers as strings
 {
     let numbA = GetBinaryNumber(a);
     let numbB = GetBinaryNumber(b);
@@ -170,8 +171,17 @@ function Sum(a, b)
     arrB = numbB.split(" ");
     let lengthA = arrA[1];
     let lengthB = arrB[1];
-    let mantissaA = "1" + arrA[2];
-    let mantissaB = "1" + arrB[2];
+    let mantissaA;
+    let mantissaB;
+    if(lengthA == "00000000")
+        mantissaA = '0' + arrA[2];
+
+    else
+        mantissaA = "1" + arrA[2];
+    if(lengthB == "00000000")
+        mantissaB = '0' + arrB[2];
+    else
+        mantissaB = "1" + arrA[2];
     if(arrA[0] != arrB[0] && lengthA == lengthB && mantissaA == mantissaB)
         return  "0 00000000 000000000000000000000000";
     else if(arrA[1] == "11111110" && arrB[1] == "11111110" && arrA[0] == '0' && arrB[0] == '0')
@@ -183,6 +193,9 @@ function Sum(a, b)
     let resLength = 0;
     let resMantissa = "";
     let resSign = "0";
+    console.log(numbA)
+    console.log(numbB)
+
 
     if (lengthB < lengthA)
     {
@@ -200,6 +213,7 @@ function Sum(a, b)
     {
         resLength = lengthA;
     }
+
 
 
     if(arrA[0] == arrB[0])
@@ -243,6 +257,7 @@ function Sum(a, b)
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
     }
+    console.log(resSign + " " + resLength, resMantissa)
 
     return resSign + " " + resLength + " " + resMantissa;
 }
@@ -411,7 +426,20 @@ function ToInt(number)
     else if(number == positiveInfinity)
         return "+Infinity";
     let arr = number.split(" ");
-    let res = parseInt("1" + arr[2], 2) * Math.pow(2, parseInt(arr[1], 2) - 127 - 23);
+    let power = parseInt(arr[1], 2) - 127 - 23;
+    let res;
+    if(arr[1] == "00000000")
+    {
+        let i = 0;
+        while(arr[2][i] != '1')
+        {
+            i++;
+        }
+        power = -127 - i;
+        console.log(parseInt(arr[2].substr(i), 2));
+        res = Math.pow(2, power) * parseInt(arr[2].substr(i), 2);
+    }
+    res = parseInt("1" + arr[2], 2) / Math.pow(10, 23) * Math.pow(2, power);
     if(arr[0] == '1')
         res *= -1;
     return res

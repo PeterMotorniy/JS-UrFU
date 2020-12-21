@@ -180,14 +180,13 @@ function Sum(a, b) // Numbers as strings
     if(lengthB == "00000000")
         mantissaB = '0' + arrB[2];
     else
-        mantissaB = "1" + arrA[2];
+        mantissaB = "1" + arrB[2];
     if(arrA[0] != arrB[0] && lengthA == lengthB && mantissaA == mantissaB)
         return  "0 00000000 000000000000000000000000";
     else if(arrA[1] == "11111110" && arrB[1] == "11111110" && arrA[0] == '0' && arrB[0] == '0')
         return positiveInfinity;
     else if(arrA[1] == "11111110" && arrB[1] == "11111110" && arrA[0] == '1' && arrB[0] == '1')
         return negativeInfinity;
-
     let delta = Math.abs(parseInt(lengthA, 2) - parseInt(lengthB, 2));
     let resLength = 0;
     let resMantissa = "";
@@ -196,13 +195,13 @@ function Sum(a, b) // Numbers as strings
     {
         resLength = lengthA;
         for(let i = 0; i < delta; i++)
-            mantissaB = '0' + mantissaB.substr(0, mantissaB.length - 1);
+            mantissaB = '0' + mantissaB.substr(0, 23);
     }
     else if (lengthA < lengthB)
     {
         resLength = lengthB;
         for(let i = 0; i < delta; i++)
-            mantissaA = '0' + mantissaA.substr(0, mantissaA.length - 1);
+            mantissaA = '0' + mantissaA.substr(0, 23);
     }
     else
     {
@@ -213,6 +212,7 @@ function Sum(a, b) // Numbers as strings
 
     if(arrA[0] == arrB[0])
     {
+
         resMantissa = SumBinaryies(mantissaA, mantissaB);
         if(resMantissa.length > 24)
         {
@@ -354,7 +354,6 @@ function Subtract(a, b)
     let resLength = 0;
     let resMantissa = "";
     let resSign = "0";
-
     if (lengthB < lengthA)
     {
         resLength = lengthA;
@@ -373,10 +372,17 @@ function Subtract(a, b)
     }
     if(arrA[0] != arrB[0])
     {
-        let res = Sum(a, b);
-        if(arrA[0] == '1' && arrB[0] == '0')
-            res[0] = '1';
-        return res;
+        if(arrA[0] == '0')
+        {
+            numbB = '0' + numbB.substr(1);
+            return Sum(ToInt(numbA).toString(), ToInt(numbB).toString());
+        }
+        else
+        {
+            numbB = '0' + numbB.substr(1);
+            numbA = '0' + numbA.substr(1);
+            return '1' + Sum(ToInt(numbA).toString(), ToInt(numbB).toString()).substr(1);
+        }
     }
     else
     {

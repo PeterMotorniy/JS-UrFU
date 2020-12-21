@@ -1,6 +1,5 @@
 let fs = require('fs');
 let arg = process.argv;
-
 let positiveInfinity = "0 11111111 000000000000000000000000";
 let negativeInfinity = "1 11111111 000000000000000000000000";
 let NaN = "0 11111111 10000000000000000000000";
@@ -8,6 +7,8 @@ let positiveZero = "0 00000000 000000000000000000000000";
 let negativeZero = "1 00000000 000000000000000000000000";
 if (arg[2] == "conv")
     fs.writeFileSync("out.txt", GetBinaryNumber(fs.readFileSync("in.txt").toString()));
+
+
 if (arg[2] == "calc")
 {
     let res = "";
@@ -38,7 +39,6 @@ function Denormalized(number) // Number as bnary string
     {
         mantissa = "0" + mantissa;
     }
-    console.log(delta)
     mantissa += (number.substr(number.indexOf('1')));
     mantissa = mantissa.substr(0, 23);
     while (mantissa.length < 23)
@@ -49,6 +49,8 @@ function Denormalized(number) // Number as bnary string
 }
 function GetBinaryNumber(number) // Number as string
 {
+    if(!Check(number))
+        return NaN;
     number = number * 1;
     if(number > ((2 - Math.pow(2, -23)) * Math.pow(2, 127)))
         return positiveInfinity;
@@ -56,9 +58,7 @@ function GetBinaryNumber(number) // Number as string
         return negativeInfinity;
     else if(Math.abs(number) < Math.pow(2, -126) && Math.abs(number) >= Math.pow(2, -149))
         return Denormalized(number.toString(2));
-    else if(!Check(number.toString()))
-        return NaN;
-    else if(number < 2e-149 && number > 0)
+    else if(number < 2e-149 && number >= 0)
         return  positiveZero;
     else if (number > -2e-149 && number < 0)
         return negativeZero;
@@ -175,7 +175,6 @@ function Sum(a, b) // Numbers as strings
     let mantissaB;
     if(lengthA == "00000000")
         mantissaA = '0' + arrA[2];
-
     else
         mantissaA = "1" + arrA[2];
     if(lengthB == "00000000")
@@ -193,10 +192,6 @@ function Sum(a, b) // Numbers as strings
     let resLength = 0;
     let resMantissa = "";
     let resSign = "0";
-    console.log(numbA)
-    console.log(numbB)
-
-
     if (lengthB < lengthA)
     {
         resLength = lengthA;
@@ -257,7 +252,6 @@ function Sum(a, b) // Numbers as strings
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
     }
-    console.log(resSign + " " + resLength, resMantissa)
 
     return resSign + " " + resLength + " " + resMantissa;
 }
@@ -340,8 +334,16 @@ function Subtract(a, b)
     arrB = numbB.split(" ");
     let lengthA = arrA[1];
     let lengthB = arrB[1];
-    let mantissaA = "1" + arrA[2];
-    let mantissaB = "1" + arrB[2];
+    let mantissaA;
+    let mantissaB;
+    if(lengthA == "00000000")
+        mantissaA = '0' + arrA[2];
+    else
+        mantissaA = "1" + arrA[2];
+    if(lengthB == "00000000")
+        mantissaB = '0' + arrB[2];
+    else
+        mantissaB = "1" + arrB[2];
     if(arrA[0] != arrB[0] && arrA[0] == '0' && lengthA == "11111110" && lengthB == "11111110")
         return positiveInfinity;
     else if(arrA[0] != arrB[0] && arrA[0] == '1' && lengthA == "11111110" && lengthB == "11111110")
@@ -430,16 +432,12 @@ function ToInt(number)
     let res;
     if(arr[1] == "00000000")
     {
-        let i = 0;
-        while(arr[2][i] != '1')
-        {
-            i++;
-        }
-        power = -127 - i;
-        console.log(parseInt(arr[2].substr(i), 2));
-        res = Math.pow(2, power) * parseInt(arr[2].substr(i), 2);
+        res = Math.pow(2, power + 1) * parseInt(arr[2], 2);
     }
-    res = parseInt("1" + arr[2], 2) / Math.pow(10, 23) * Math.pow(2, power);
+    else
+    {
+        res = parseInt("1" + arr[2], 2) * Math.pow(2, power);
+    }
     if(arr[0] == '1')
         res *= -1;
     return res

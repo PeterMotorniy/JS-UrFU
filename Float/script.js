@@ -210,7 +210,7 @@ function Sum(a, b) // Numbers as strings
         resLength = lengthA;
     }
 
-    if(lengthB == "00000000" && lengthB == "00000000")
+    if(lengthA == "00000000" && lengthB == "00000000")
     {
         mantissaA = arrA[2];
         mantissaB = arrB[2];
@@ -418,7 +418,9 @@ function Subtract(a, b)
     {
         resLength = lengthA;
     }
-    if(lengthB == "00000000" && lengthB == "00000000")
+
+
+    if(lengthA == "00000000" && lengthB == "00000000")
     {
         mantissaA = arrA[2];
         mantissaB = arrB[2];
@@ -482,6 +484,8 @@ function Subtract(a, b)
     }
     else
     {
+        console.log(numbA)
+        console.log(numbB);
         if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
         {
             if(arrA[0] == '0')
@@ -515,6 +519,7 @@ function Subtract(a, b)
         while (str.length < 8)
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
+        console.log(resSign + " " + resLength + " " + resMantissa)
         return resSign + " " + resLength + " " + resMantissa;
     }
 }

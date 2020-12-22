@@ -177,6 +177,7 @@ function Sum(a, b) // Numbers as strings
         mantissaA = '0' + arrA[2];
     else
         mantissaA = "1" + arrA[2];
+
     if(lengthB == "00000000")
         mantissaB = '0' + arrB[2];
     else
@@ -191,6 +192,7 @@ function Sum(a, b) // Numbers as strings
     let resLength = 0;
     let resMantissa = "";
     let resSign = "0";
+
     if (lengthB < lengthA)
     {
         resLength = lengthA;
@@ -208,9 +210,55 @@ function Sum(a, b) // Numbers as strings
         resLength = lengthA;
     }
 
-
-
-    if(arrA[0] == arrB[0])
+    if(lengthB == "00000000" && lengthB == "00000000")
+    {
+        mantissaA = arrA[2];
+        mantissaB = arrB[2];
+        resLength = "00000000";
+        if(arrA[0] == '0' && arrB[0] == '0')
+        {
+            resSign = "0";
+            resMantissa = SumBinaryies(mantissaA, mantissaB);
+        }
+        else if(arrA[0] == '1' && arrB[0] == '1')
+        {
+            resSign = "1";
+            resMantissa = SumBinaryies(mantissaA, mantissaB);
+        }
+        else if(arrA[0] == '0' && arrB[0] == '1')
+        {
+            if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
+            {
+                resSign = "0";
+                resMantissa = SubtractBinaries(mantissaA, mantissaB);
+            }
+            else if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
+            {
+                resSign = "1";
+                resMantissa = SumBinaryies(mantissaB, mantissaA);
+            }
+        }
+        else
+        {
+            if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
+            {
+                resSign = "0";
+                resMantissa = SubtractBinaries(mantissaB, mantissaA);
+            }
+            else if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
+            {
+                resSign = "1";
+                resMantissa = SumBinaryies(mantissaA, mantissaB);
+            }
+        }
+        if (resMantissa.length > 23)
+        {
+            resMantissa = resMantissa.substr(0, 23);
+            resLength = "00000001";
+        }
+        return resSign + " " + resLength + " " + resMantissa;
+    }
+    else if(arrA[0] == arrB[0])
     {
 
         resMantissa = SumBinaryies(mantissaA, mantissaB);
@@ -370,7 +418,55 @@ function Subtract(a, b)
     {
         resLength = lengthA;
     }
-    if(arrA[0] != arrB[0])
+    if(lengthB == "00000000" && lengthB == "00000000")
+    {
+        mantissaA = arrA[2];
+        mantissaB = arrB[2];
+        resLength = "00000000";
+        if(arrA[0] == '0' && arrB[0] == '1')
+        {
+            resSign = "0";
+            resMantissa = SumBinaryies(mantissaA, mantissaB);
+        }
+        else if(arrA[0] == '1' && arrB[0] == '0')
+        {
+            resSign = "1";
+            resMantissa = SumBinaryies(mantissaA, mantissaB);
+        }
+        else if(arrA[0] == '0' && arrB[0] == '0')
+        {
+            if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
+            {
+                resSign = "0";
+                resMantissa = SubtractBinaries(mantissaA, mantissaB);
+            }
+            else if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
+            {
+                resSign = "1";
+                resMantissa = SumBinaryies(mantissaB, mantissaA);
+            }
+        }
+        else
+        {
+            if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
+            {
+                resSign = "0";
+                resMantissa = SubtractBinaries(mantissaB, mantissaA);
+            }
+            else if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
+            {
+                resSign = "1";
+                resMantissa = SumBinaryies(mantissaA, mantissaB);
+            }
+        }
+        if (resMantissa.length > 23)
+        {
+            resMantissa = resMantissa.substr(0, 23);
+            resLength = "00000001";
+        }
+        return resSign + " " + resLength + " " + resMantissa;
+    }
+    else if(arrA[0] != arrB[0])
     {
         if(arrA[0] == '0')
         {

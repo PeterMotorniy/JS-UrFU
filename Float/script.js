@@ -209,7 +209,14 @@ function Sum(a, b) // Numbers as strings
     {
         resLength = lengthA;
     }
-
+    if(lengthA == "00000000" && lengthB != "00000000")
+    {
+        mantissaA = mantissaA.substr(1) + '0'
+    }
+    if(lengthB == "00000000" && lengthA != "00000000")
+    {
+        mantissaB = mantissaB.substr(1) + '0'
+    }
     if(lengthA == "00000000" && lengthB == "00000000")
     {
         mantissaA = arrA[2];
@@ -235,7 +242,7 @@ function Sum(a, b) // Numbers as strings
             else if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
             {
                 resSign = "1";
-                resMantissa = SumBinaryies(mantissaB, mantissaA);
+                resMantissa = SubtractBinaries(mantissaB, mantissaA);
             }
         }
         else
@@ -248,7 +255,7 @@ function Sum(a, b) // Numbers as strings
             else if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
             {
                 resSign = "1";
-                resMantissa = SumBinaryies(mantissaA, mantissaB);
+                resMantissa = SubtractBinaries(mantissaA, mantissaB);
             }
         }
         if (resMantissa.length > 23)
@@ -300,7 +307,6 @@ function Sum(a, b) // Numbers as strings
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
     }
-
     return resSign + " " + resLength + " " + resMantissa;
 }
 
@@ -419,8 +425,15 @@ function Subtract(a, b)
         resLength = lengthA;
     }
 
-
-    if(lengthA == "00000000" && lengthB == "00000000")
+    if(lengthA == "00000000" && lengthB != "00000000")
+    {
+        mantissaA = mantissaA.substr(1) + '0'
+    }
+    else if(lengthB == "00000000" && lengthA != "00000000")
+    {
+        mantissaB = mantissaB.substr(1) + '0'
+    }
+    else if(lengthA == "00000000" && lengthB == "00000000")
     {
         mantissaA = arrA[2];
         mantissaB = arrB[2];
@@ -445,7 +458,7 @@ function Subtract(a, b)
             else if(parseInt(mantissaA, 2) < parseInt(mantissaB, 2))
             {
                 resSign = "1";
-                resMantissa = SumBinaryies(mantissaB, mantissaA);
+                resMantissa = SubtractBinaries(mantissaB, mantissaA);
             }
         }
         else
@@ -458,7 +471,7 @@ function Subtract(a, b)
             else if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
             {
                 resSign = "1";
-                resMantissa = SumBinaryies(mantissaA, mantissaB);
+                resMantissa = SubtractBinaries(mantissaA, mantissaB);
             }
         }
         if (resMantissa.length > 23)
@@ -484,8 +497,6 @@ function Subtract(a, b)
     }
     else
     {
-        console.log(numbA)
-        console.log(numbB);
         if(parseInt(mantissaA, 2) > parseInt(mantissaB, 2))
         {
             if(arrA[0] == '0')
@@ -519,7 +530,6 @@ function Subtract(a, b)
         while (str.length < 8)
             str = "0" + str;
         resLength = SubtractBinaries(resLength, str.toString(2));
-        console.log(resSign + " " + resLength + " " + resMantissa)
         return resSign + " " + resLength + " " + resMantissa;
     }
 }

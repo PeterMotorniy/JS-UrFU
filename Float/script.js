@@ -398,6 +398,7 @@ function Subtract(a, b)
         mantissaB = '0' + arrB[2];
     else
         mantissaB = "1" + arrB[2];
+
     if(arrA[0] != arrB[0] && arrA[0] == '0' && lengthA == "11111110" && lengthB == "11111110")
         return positiveInfinity;
     else if(arrA[0] != arrB[0] && arrA[0] == '1' && lengthA == "11111110" && lengthB == "11111110")
@@ -408,6 +409,7 @@ function Subtract(a, b)
     let resLength = 0;
     let resMantissa = "";
     let resSign = "0";
+
     if (lengthB < lengthA)
     {
         resLength = lengthA;
@@ -425,15 +427,16 @@ function Subtract(a, b)
         resLength = lengthA;
     }
 
+
     if(lengthA == "00000000" && lengthB != "00000000")
     {
         mantissaA = mantissaA.substr(1) + '0'
     }
-    else if(lengthB == "00000000" && lengthA != "00000000")
+    if(lengthB == "00000000" && lengthA != "00000000")
     {
         mantissaB = mantissaB.substr(1) + '0'
     }
-    else if(lengthA == "00000000" && lengthB == "00000000")
+    if(lengthA == "00000000" && lengthB == "00000000")
     {
         mantissaA = arrA[2];
         mantissaB = arrB[2];
